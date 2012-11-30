@@ -34,7 +34,6 @@ Options
 It is important to use [DynamicVariables](http://docs.rainmeter.net/manual/variables#DynamicVariables) with this plugin.
 
 * **Hex** - When set to "1", the output color is in hexidecimal form. When set to "0", the output color is in decimal form separated by commas. `Hex=0` is default.
-
 * **DisplayType** - Type of output. `DisplayType=All` is default. Options include:
   * **Red** - Output only the red value.
   * **Green** - Output only the green value.
@@ -42,7 +41,6 @@ It is important to use [DynamicVariables](http://docs.rainmeter.net/manual/varia
   * **Alpha** - Output only the alpha value (for `ColorType=Aero` only).
   * **RGB** - Output only the red, green and blue values (No alpha is output).
   * **ALL** - Output only the all values.
-
 * **ColorType** - Type of color to retrieve. `ColorType=Desktop` is default. Options include:
   * **Aero** - Current color of Aero theme (including alpha transparency). This is for Windows Vista and above.
   * **Desktop** - Current color of the desktop background (when a solid color has been chosen for the background).
