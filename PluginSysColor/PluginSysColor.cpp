@@ -18,6 +18,8 @@
 
 #include "PluginSysColor.h"
 
+HMODULE hLib;
+
 std::wstring ColorToString(const int color, bool hex);
 
 PLUGIN_EXPORT void Initialize(void** data, void* rm)
@@ -25,12 +27,23 @@ PLUGIN_EXPORT void Initialize(void** data, void* rm)
 	Measure* measure = new Measure;
 	*data = measure;
 
-	OSVERSIONINFO os;
-	ZeroMemory(&os, sizeof(OSVERSIONINFO));
-	os.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&os);
-	
-	measure->isXP = (os.dwMajorVersion < 6) ? true : false;
+	OSVERSIONINFOEX os = {sizeof(OSVERSIONINFOEX)};
+	if (GetVersionEx((OSVERSIONINFO*)&os))
+	{
+		measure->isXP = (os.dwMajorVersion < 6) ? true : false;
+	}
+
+	if (!measure->isXP)
+	{
+		SetDllDirectory(L"");
+		SetLastError(ERROR_SUCCESS);
+
+		hLib = LoadLibrary(L"dwmapi.dll");
+		if (hLib)
+		{
+			c_DwmGetColorizationColor = (FPDWMGETCOLORIZATIONCOLOR)GetProcAddress(hLib, "DwmGetColorizationColor");
+		}
+	}
 }
 
 PLUGIN_EXPORT void Reload(void* data, void* rm, double* maxValue)
@@ -223,7 +236,7 @@ PLUGIN_EXPORT double Update(void* data)
 		DWORD color = 0;
 		BOOL opaque = FALSE;
 
-		HRESULT hr = DwmGetColorizationColor(&color, &opaque);
+		HRESULT hr = c_DwmGetColorizationColor(&color, &opaque);
 		if (SUCCEEDED(hr))
 		{
 			b = (color & 255);
@@ -352,6 +365,10 @@ PLUGIN_EXPORT void Finalize(void* data)
 {
 	Measure* measure = (Measure*)data;
 	delete measure;
+
+	FreeLibrary(hLib);
+	hLib = NULL;
+	c_DwmGetColorizationColor = NULL;
 }
 
 std::wstring ColorToString(const int color, bool hex)

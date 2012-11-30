@@ -18,6 +18,9 @@
 
 #include "StdAfx.h"
 
+typedef HRESULT (WINAPI * FPDWMGETCOLORIZATIONCOLOR)(DWORD* pcrColorization, BOOL* pfOpaqueBlend);
+static FPDWMGETCOLORIZATIONCOLOR c_DwmGetColorizationColor = NULL;
+
 // Following enumerated types corespond directly to these values: http://msdn.microsoft.com/en-us/library/windows/desktop/ms724371%28v=vs.85%29.aspx
 //	 (except Glass which is retrieved through DWM)
 enum MeasureType
