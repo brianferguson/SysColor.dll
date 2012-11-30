@@ -82,6 +82,7 @@ Changes
 Here is a list of the major changes to the plugin.
 
 #####Version:
+* **1.0.1** - Fixed Windows XP support.
 * **1.0.0** - Initial Version.
 
 Download
