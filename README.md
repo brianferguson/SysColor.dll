@@ -23,6 +23,7 @@ Here are some of the features of the SysColor plugin:
 * 30 different non-Aero colors available (eg. `Background`, `Highlight`, `Menu`).
 * Different display modes.
 * Output in hex or decimal form.
+* A numeric return of "1" means the color was retrieved. A numeric value of "-1" means the color was *not* retrieved. The numeric value can be retrieved through [section variables](http://docs.rainmeter.net/manual-beta/variables/section-variables) (eg. [MeasureName:]).
 
 #####Note:
 When using a Aero theme (for non-XP users), the only available color is the current Aero color. You can retrieve the other colors, however they may *not* be the current color shown. I am looking for ways to retrieve the different colors for the Aero theme.
@@ -33,6 +34,7 @@ Options
 It is important to use [DynamicVariables](http://docs.rainmeter.net/manual/variables#DynamicVariables) with this plugin.
 
 * **Hex** - When set to "1", the output color is in hexidecimal form. When set to "0", the output color is in decimal form separated by commas. `Hex=0` is default.
+
 * **DisplayType** - Type of output. `DisplayType=All` is default. Options include:
   * **Red** - Output only the red value.
   * **Green** - Output only the green value.
@@ -40,6 +42,7 @@ It is important to use [DynamicVariables](http://docs.rainmeter.net/manual/varia
   * **Alpha** - Output only the alpha value (for `ColorType=Aero` only).
   * **RGB** - Output only the red, green and blue values (No alpha is output).
   * **ALL** - Output only the all values.
+
 * **ColorType** - Type of color to retrieve. `ColorType=Desktop` is default. Options include:
   * **Aero** - Current color of Aero theme (including alpha transparency). This is for Windows Vista and above.
   * **Desktop** - Current color of the desktop background (when a solid color has been chosen for the background).
@@ -52,7 +55,7 @@ It is important to use [DynamicVariables](http://docs.rainmeter.net/manual/varia
   * **ActiveBorder** - Active window border color.
   * **InActiveBorder** - Inactive window border color.
   * **Highlight** - Color of selected items in a control.
-  * **HightlightText - Color of selected text in a control.
+  * **HightlightText** - Color of selected text in a control.
   * **Menu** - Menu background color.
   * **MenuText** - Color of text in a menu.
   * **MenuBar** - Background color for a menu bar when the menu appears as a flat menu.
