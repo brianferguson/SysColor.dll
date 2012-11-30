@@ -13,8 +13,8 @@ Contents
 * [Download](#download)
 * [Build Instructions](#build-instructions)
 * [Examples](#examples)
- 
- 
+
+
 Features
 -
 Here are some of the features of the SysColor plugin:
@@ -35,7 +35,6 @@ It is important to use [DynamicVariables](http://docs.rainmeter.net/manual/varia
 
 * **Hex** - When set to "1", the output color is in hexidecimal form. When set to "0", the output color is in decimal form separated by commas. `Hex=0` is default.
 
-
 * **DisplayType** - Type of output. `DisplayType=All` is default. Options include:
   * **Red** - Output only the red value.
   * **Green** - Output only the green value.
@@ -44,7 +43,6 @@ It is important to use [DynamicVariables](http://docs.rainmeter.net/manual/varia
   * **RGB** - Output only the red, green and blue values (No alpha is output).
   * **ALL** - Output only the all values.
 
- 
 * **ColorType** - Type of color to retrieve. `ColorType=Desktop` is default. Options include:
   * **Aero** - Current color of Aero theme (including alpha transparency). This is for Windows Vista and above.
   * **Desktop** - Current color of the desktop background (when a solid color has been chosen for the background).
@@ -77,10 +75,10 @@ It is important to use [DynamicVariables](http://docs.rainmeter.net/manual/varia
   * **AppWorkspace** - Background color of certain multiple document interface (MDI) applications.
   * **Scrollbar** - Scrollbar gray area.
   * **Hyperlink** - Color of hyperlink or hot-tracked items.
- 
+
  #####Note:
  When using a Aero theme, some of the color types will not be accurately represented.
-	
+
 Changes
 -
 Here is a list of the major changes to the plugin.
