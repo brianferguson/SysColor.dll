@@ -25,6 +25,8 @@
 
 // STL
 #include <string>
+#include <vector>
+#include <algorithm>
 
 // Rainmeter API
 #include "../RainmeterAPI/RainmeterAPI.h"

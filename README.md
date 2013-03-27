@@ -26,7 +26,7 @@ Here are some of the features of the SysColor plugin:
 * A numeric return of "1" means the color was retrieved. A numeric value of "-1" means the color was *not* retrieved. The numeric value can be retrieved through [section variables](http://docs.rainmeter.net/manual-beta/variables/section-variables) (eg. [MeasureName:]).
 
 #####Note:
-When using a Aero theme (for non-XP users), the only available color is the current Aero color. You can retrieve the other colors, however they may *not* be the current color shown. I am looking for ways to retrieve the different colors for the Aero theme.
+When using a Aero theme (for non-XP users), the only available color is the current Aero color. You can retrieve the other colors, however they may *not* be the current color shown.
 
 
 Options
@@ -82,6 +82,7 @@ Changes
 Here is a list of the major changes to the plugin.
 
 #####Version:
+* **1.0.2** - Fixed crash when using `ColorType=Aero` across multiple skins.
 * **1.0.1** - Fixed Windows XP support.
 * **1.0.0** - Initial Version.
 

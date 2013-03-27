@@ -19,6 +19,7 @@
 #include "PluginSysColor.h"
 
 HMODULE hLib;
+static std::vector<Measure*> g_Measures;
 
 std::wstring ColorToString(const int color, bool hex);
 
@@ -26,6 +27,8 @@ PLUGIN_EXPORT void Initialize(void** data, void* rm)
 {
 	Measure* measure = new Measure;
 	*data = measure;
+
+	g_Measures.push_back(measure);
 
 	OSVERSIONINFOEX os = {sizeof(OSVERSIONINFOEX)};
 	if (GetVersionEx((OSVERSIONINFO*)&os))
@@ -189,7 +192,7 @@ PLUGIN_EXPORT void Reload(void* data, void* rm, double* maxValue)
 		}
 		else
 		{
-			RmLog(LOG_ERROR, L"SysColor.dll: Windows XP does not support ColorType=Glass");
+			RmLog(LOG_ERROR, L"SysColor.dll: Windows XP does not support ColorType=Aero");
 		}
 	}
 	else if (_wcsicmp(L"HYPERLINK", cType) == 0)
@@ -366,9 +369,15 @@ PLUGIN_EXPORT void Finalize(void* data)
 	Measure* measure = (Measure*)data;
 	delete measure;
 
-	FreeLibrary(hLib);
-	hLib = NULL;
-	c_DwmGetColorizationColor = NULL;
+	auto iter = std::find(g_Measures.begin(), g_Measures.end(), measure);
+	g_Measures.erase(iter);
+
+	if (g_Measures.empty())
+	{
+		FreeLibrary(hLib);
+		hLib = NULL;
+		c_DwmGetColorizationColor = NULL;
+	}
 }
 
 std::wstring ColorToString(const int color, bool hex)
