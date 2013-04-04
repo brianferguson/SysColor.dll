@@ -274,7 +274,6 @@ PLUGIN_EXPORT double Update(void* data)
 		DeleteObject(hBrush);
 	}
 
-
 	bool hex = measure->isHex;
 
 	switch (measure->displayType)
@@ -375,8 +374,8 @@ PLUGIN_EXPORT void Finalize(void* data)
 	if (g_Measures.empty())
 	{
 		FreeLibrary(hLib);
-		hLib = NULL;
-		c_DwmGetColorizationColor = NULL;
+		hLib = nullptr;
+		c_DwmGetColorizationColor = nullptr;
 	}
 }
 

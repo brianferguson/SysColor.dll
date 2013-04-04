@@ -103,14 +103,13 @@ Build Instructions
 -
 This plugin was written in c++ using the [Rainmeter Plugin SDK](https://github.com/rainmeter/rainmeter-plugin-sdk)
 
-To build this source code, you will need Visual Studio 2010. If you are using any _**paid**_ version of Visual Studio (Professional, Premium, Ultimate, etc.) you can open "PluginClipboard.sln" and build from there. If you are using Visual C++ 2010 Express, then please install the following **in order**:
+The plugin can be built using the free Visual Studio Express 2012 for Windows Desktop
+or any paid version of VS2012 (e.g. Professional). Note VS Update 1 is required for targeting Windows XP.
 
-1. Visual Studio 2010 Express Edition
-2. Visual Studio 2010 SP1
-3. Windows 7.1 SDK
-4. KB2519277 compiler update
+1. [Visual Studio 2012 Express Edition](http://microsoft.com/visualstudio/eng/products/visual-studio-express-for-windows-desktop)
+2. [Visual Studio 2012 Update 1](http://microsoft.com/visualstudio/eng/downloads#d-visual-studio-2012-update) (needed to target Windows XP)
 
-Then you can open "PluginClipboard.sln" and build from there.
+Once you have Visual Studio install (with Update 1), then you can open "PluginSysColor.sln" and build from there.
 
 
 Examples
