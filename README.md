@@ -19,20 +19,19 @@ Features
 -
 Here are some of the features of the SysColor plugin:
 
+* Retrieval of Windows 8/8.1 window color!
 * Retrieval of the current Windows Aero color (including alpha transparency) for Windows Vista and above.
-* 30 different non-Aero colors available (eg. `Background`, `Highlight`, `Menu`).
+* Over 30 different colors available (eg. `Background`, `Highlight`, `Menu`).
 * Different display modes.
 * Output in hex or decimal form.
 * A numeric return of "1" means the color was retrieved. A numeric value of "-1" means the color was *not* retrieved. The numeric value can be retrieved through [section variables](http://docs.rainmeter.net/manual-beta/variables/section-variables) (eg. [MeasureName:]).
 
 #####Note:
-When using a Aero theme (for non-XP users), the only available color is the current Aero color. You can retrieve the other colors, however they may *not* be the current color shown.
+For non-Windows XP users using an Aero theme, the Desktop Window Manager might choose which color get returned for some options.
 
 
 Options
 -
-It is important to use [DynamicVariables](http://docs.rainmeter.net/manual/variables#DynamicVariables) with this plugin.
-
 * **Hex** - When set to "1", the output color is in hexidecimal form. When set to "0", the output color is in decimal form separated by commas. `Hex=0` is default.
 * **DisplayType** - Type of output. `DisplayType=All` is default. Options include:
   * **Red** - Output only the red value.
@@ -42,7 +41,8 @@ It is important to use [DynamicVariables](http://docs.rainmeter.net/manual/varia
   * **RGB** - Output only the red, green and blue values (No alpha is output).
   * **ALL** - Output only the all values.
 * **ColorType** - Type of color to retrieve. `ColorType=Desktop` is default. Options include:
-  * **Aero** - Current color of Aero theme (including alpha transparency). This is for Windows Vista and above.
+  * **WIN8** - Current window color for Windows 8 and 8.1 (I recommend using `DisplayType=RGB` for this option). This option is not available for Windows XP users.
+  * **Aero** - Current color of Aero theme (including alpha transparency). This option is not available for Windows XP users.
   * **Desktop** - Current color of the desktop background (when a solid color has been chosen for the background).
   * **ActiveCaption** - Left side color in the color gradient of an active window's title bar.
   * **ActiveCaptionGradient** - Right side color in the color gradient of an active window's title bar.
@@ -73,15 +73,24 @@ It is important to use [DynamicVariables](http://docs.rainmeter.net/manual/varia
   * **AppWorkspace** - Background color of certain multiple document interface (MDI) applications.
   * **Scrollbar** - Scrollbar gray area.
   * **Hyperlink** - Color of hyperlink or hot-tracked items.
-
- #####Note:
- When using a Aero theme, some of the color types will not be accurately represented.
+* ColorType special "raw" [DWM](http://en.wikipedia.org/wiki/Desktop_Window_Manager) values for colorization. These options are not available for Windows XP. Options include:
+  * **DWM_COLOR** - Raw color DWM uses for colorization.
+  * **DWM_AFTERGLOW** - Raw color DWM uses for colorization. This is usually the same value as `DWM_COLOR`.
+  * **DWM_COLOR_BALANCE** - Represents the color intensity. This can adjusted this under the "Personalization\Window Color and Appearance" control panel item.
+  * **DWM_COLOR_AFTERGLOW_BALANCE** - DWM calculated afterglow balance.
+  * **DWM_COLOR_BLUR_BALANCE** - DWM calculated blur balance. Usually returns `1` on Windows 8/8.1 systems.
+  * **DWM_GLASS_REFLECTION_INTENSITY** - DWM calculated glass reflection intensity. Usually returns `1` on Windows 8/8.1 systems.
+  * **DWM_OPAQUE_BLEND** - Returns `0` if transparency is enabled on Windows Vista/7. Returns `1` if transparency is not enabled or if on Windows8/8.1 systems.
+  
+#####Note:
+For non-Windows XP users using an Aero theme, the Desktop Window Manager might choose which color get returned for some of the above options.
 
 Changes
 -
 Here is a list of the major changes to the plugin.
 
 #####Version:
+* **1.1.0.13** - Added new types. Updated to latest SDK. Updated to use VS2013.
 * **1.0.2** - Fixed crash when using `ColorType=Aero` across multiple skins.
 * **1.0.1** - Fixed Windows XP support.
 * **1.0.0** - Initial Version.
@@ -101,21 +110,25 @@ Download
 
 Build Instructions
 -
-This plugin was written in c++ using the [Rainmeter Plugin SDK](https://github.com/rainmeter/rainmeter-plugin-sdk)
+This plugin can be built using any version of Visual Studio 2013. If you don't already have VS2013, you can download the free "Visual Studio Express 2013 for Windows Desktop" version [here](http://www.visualstudio.com/downloads/download-visual-studio-vs).
 
-The plugin can be built using the free Visual Studio Express 2012 for Windows Desktop
-or any paid version of VS2012 (e.g. Professional). Note VS Update 1 is required for targeting Windows XP.
-
-1. [Visual Studio 2012 Express Edition](http://microsoft.com/visualstudio/eng/products/visual-studio-express-for-windows-desktop)
-2. [Visual Studio 2012 Update 1](http://microsoft.com/visualstudio/eng/downloads#d-visual-studio-2012-update) (needed to target Windows XP)
-
-Once you have Visual Studio install (with Update 1), then you can open "PluginSysColor.sln" and build from there.
+After Visual Studio has been installed and updated, open `PluginSysColor.sln` at the root of the repository to build.
 
 
 Examples
 -
-
 ####Example 1:
+This example will get current Windows 8/8.1 window color.
+
+```ini
+[mWindowColor]
+Measure=Plugin
+Plugin=SysColor
+ColorType=WIN8
+```
+
+
+####Example 2:
 This example will get current desktop background color, the red value of the highlight color, and menu background color.
 
 ```ini
@@ -136,7 +149,7 @@ DisplayType=ALL
 ColorType=Menu
 ```
 
-####Example 2:
+####Example 3:
 This example will get the current Aero color, and make it the background of the skin.
 
 ```ini

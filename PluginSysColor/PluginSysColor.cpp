@@ -21,13 +21,14 @@
 HMODULE hLib;
 static std::vector<Measure*> g_Measures;
 
-std::wstring ColorToString(const int color, bool hex);
+inline std::wstring ColorToString(const int color, bool hex);
 
 PLUGIN_EXPORT void Initialize(void** data, void* rm)
 {
 	Measure* measure = new Measure;
 	*data = measure;
 
+	measure->rm = rm;
 	g_Measures.push_back(measure);
 
 	OSVERSIONINFOEX os = {sizeof(OSVERSIONINFOEX)};
@@ -44,6 +45,8 @@ PLUGIN_EXPORT void Initialize(void** data, void* rm)
 		hLib = LoadLibrary(L"dwmapi.dll");
 		if (hLib)
 		{
+			c_DwmGetColorizationParameters = (FPDWMGETCOLORIZATIONPARAMETERS)GetProcAddress(hLib, (LPCSTR)127);	// Undocumented!
+			c_DwmIsCompositionEnabled = (FPDWMISCOMPOSITIONENABLED)GetProcAddress(hLib, "DwmIsCompositionEnabled");
 			c_DwmGetColorizationColor = (FPDWMGETCOLORIZATIONCOLOR)GetProcAddress(hLib, "DwmGetColorizationColor");
 		}
 	}
@@ -56,168 +59,208 @@ PLUGIN_EXPORT void Reload(void* data, void* rm, double* maxValue)
 	LPCWSTR dType = RmReadString(rm, L"DisplayType", L"ALL");
 	if (_wcsicmp(L"ALL", dType) == 0)
 	{
-		measure->displayType = DISPLAY_ALL;
+		measure->displayType = ALL;
 	}
 	else if (_wcsicmp(L"RED", dType) == 0)
 	{
-		measure->displayType = DISPLAY_RED;
+		measure->displayType = RED;
 	}
 	else if (_wcsicmp(L"GREEN", dType) == 0)
 	{
-		measure->displayType = DISPLAY_GREEN;
+		measure->displayType = GREEN;
 	}
 	else if (_wcsicmp(L"BLUE", dType) == 0)
 	{
-		measure->displayType = DISPLAY_BLUE;
+		measure->displayType = BLUE;
 	}
 	else if (_wcsicmp(L"ALPHA", dType) == 0)
 	{
-		measure->displayType = DISPLAY_ALPHA;
+		measure->displayType = ALPHA;
 	}
 	else if (_wcsicmp(L"RGB", dType) == 0)
 	{
-		measure->displayType = DISPLAY_RGB;
+		measure->displayType = RGB;
 	}
 	else
 	{
-		RmLog(LOG_ERROR, L"SysColor.dll: Unknown display type");
+		RmLogF(rm, LOG_ERROR, L"Unknown DisplayType: %s", dType);
 	}
 
+	bool isColorSupported = true;
 	LPCWSTR cType = RmReadString(rm, L"ColorType", L"DESKTOP");
 	if (_wcsicmp(L"SCROLLBAR", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_SCROLLBAR;
+		measure->colorType = SCROLLBAR;
 	}
 	else if (_wcsicmp(L"DESKTOP", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_DESKTOP;
+		measure->colorType = DESKTOP;
 	}
 	else if (_wcsicmp(L"ACTIVECAPTION", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_ACTIVECAPTION;
+		measure->colorType = ACTIVECAPTION;
 	}
 	else if (_wcsicmp(L"INACTIVECAPTION", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_INACTIVECAPTION;
+		measure->colorType = INACTIVECAPTION;
 	}
 	else if (_wcsicmp(L"MENU", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_MENU;
+		measure->colorType = MENU;
 	}
 	else if (_wcsicmp(L"WINDOW", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_WINDOW;
+		measure->colorType = WINDOW;
 	}
 	else if (_wcsicmp(L"WINDOWFRAME", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_WINDOWFRAME;
+		measure->colorType = WINDOWFRAME;
 	}
 	else if (_wcsicmp(L"MENUTEXT", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_MENUTEXT;
+		measure->colorType = MENUTEXT;
 	}
 	else if (_wcsicmp(L"WINDOWTEXT", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_WINDOWTEXT;
+		measure->colorType = WINDOWTEXT;
 	}
 	else if (_wcsicmp(L"CAPTIONTEXT", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_CAPTIONTEXT;
+		measure->colorType = CAPTIONTEXT;
 	}
 	else if (_wcsicmp(L"ACTIVEBORDER", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_ACTIVEBORDER;
+		measure->colorType = ACTIVEBORDER;
 	}
 	else if (_wcsicmp(L"INACTIVEBORDER", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_INACTIVEBORDER;
+		measure->colorType = INACTIVEBORDER;
 	}
 	else if (_wcsicmp(L"APPWORKSPACE", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_APPWORKSPACE;
+		measure->colorType = APPWORKSPACE;
 	}
 	else if (_wcsicmp(L"HIGHLIGHT", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_HIGHLIGHT;
+		measure->colorType = HIGHLIGHT;
 	}
 	else if (_wcsicmp(L"HIGHLIGHTTEXT", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_HIGHLIGHTTEXT;
+		measure->colorType = HIGHLIGHTTEXT;
 	}
 	else if (_wcsicmp(L"BUTTONFACE", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_BUTTONFACE;
+		measure->colorType = BUTTONFACE;
 	}
 	else if (_wcsicmp(L"BUTTONSHADOW", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_BUTTONSHADOW;
+		measure->colorType = BUTTONSHADOW;
 	}
 	else if (_wcsicmp(L"GRAYTEXT", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_GRAYTEXT;
+		measure->colorType = GRAYTEXT;
 	}
 	else if (_wcsicmp(L"BUTTONTEXT", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_BUTTONTEXT;
+		measure->colorType = BUTTONTEXT;
 	}
 	else if (_wcsicmp(L"INACTIVECAPTIONTEXT", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_INACTIVECAPTIONTEXT;
+		measure->colorType = INACTIVECAPTIONTEXT;
 	}
 	else if (_wcsicmp(L"BUTTONHIGHLIGHT", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_BUTTONHIGHLIGHT;
+		measure->colorType = BUTTONHIGHLIGHT;
 	}
 	else if (_wcsicmp(L"3DDARKSHADOW", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_3DDARKSHADOW;
+		measure->colorType = DDARKSHADOW;
 	}
 	else if (_wcsicmp(L"3DLIGHT", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_3DLIGHT;
+		measure->colorType = DLIGHT;
 	}
 	else if (_wcsicmp(L"TOOLTIPTEXT", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_INFOTEXT;
+		measure->colorType = INFOTEXT;
 	}
 	else if (_wcsicmp(L"TOOLTIPBACKGROUND", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_INFOBACKGROUND;
-	}
-	else if (_wcsicmp(L"AERO", cType) == 0)
-	{
-		if (!measure->isXP)
-		{
-			measure->colorType = SYSCOLOR_GLASS;
-		}
-		else
-		{
-			RmLog(LOG_ERROR, L"SysColor.dll: Windows XP does not support ColorType=Aero");
-		}
+		measure->colorType = INFOBACKGROUND;
 	}
 	else if (_wcsicmp(L"HYPERLINK", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_HOTLIGHT;
+		measure->colorType = HOTLIGHT;
 	}
 	else if (_wcsicmp(L"ACTIVECAPTIONGRADIENT", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_ACTIVECAPTIONGRADIENT;
+		measure->colorType = ACTIVECAPTIONGRADIENT;
 	}
 	else if (_wcsicmp(L"INACTIVECAPTIONGRADIENT", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_INACTIVECAPTIONGRADIENT;
+		measure->colorType = INACTIVECAPTIONGRADIENT;
 	}
 	else if (_wcsicmp(L"MENUHIGHLIGHT", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_MENUHIGHLIGHT;
+		measure->colorType = MENUHIGHLIGHT;
 	}
 	else if (_wcsicmp(L"MENUBAR", cType) == 0)
 	{
-		measure->colorType = SYSCOLOR_MENUBAR;
+		measure->colorType = MENUBAR;
+	}
+	else if (_wcsicmp(L"AERO", cType) == 0)
+	{
+		if (!measure->isXP) measure->colorType = WIN7_AERO;
+		else isColorSupported = false;
+	}
+	else if (_wcsicmp(L"WIN8", cType) == 0)
+	{
+		if (!measure->isXP) measure->colorType = WIN8_WINDOW;
+		else isColorSupported = false;
+	}
+	else if (_wcsicmp(L"DWM_COLOR", cType) == 0)
+	{
+		if (!measure->isXP) measure->colorType = DWM_COLORIZATION_COLOR;
+		else isColorSupported = false;
+	}
+	else if (_wcsicmp(L"DWM_AFTERGLOW_COLOR", cType) == 0)
+	{
+		if (!measure->isXP) measure->colorType = DWM_AFTERGLOW_COLOR;
+		else isColorSupported = false;
+	}
+	else if (_wcsicmp(L"DWM_COLOR_BALANCE", cType) == 0)
+	{
+		if (!measure->isXP) measure->colorType = DWM_COLOR_BALANCE;
+		else isColorSupported = false;
+	}
+	else if (_wcsicmp(L"DWM_AFTERGLOW_BALANCE", cType) == 0)
+	{
+		if (!measure->isXP) measure->colorType = DWM_AFTERGLOW_BALANCE;
+		else isColorSupported = false;
+	}
+	else if (_wcsicmp(L"DWM_BLUR_BALANCE", cType) == 0)
+	{
+		if (!measure->isXP) measure->colorType = DWM_BLUR_BALANCE;
+		else isColorSupported = false;
+	}
+	else if (_wcsicmp(L"DWM_GLASS_REFLECTION_INTENSITY", cType) == 0)
+	{
+		if (!measure->isXP) measure->colorType = DWM_GLASS_REFLECTION_INTENSITY;
+		else isColorSupported = false;
+	}
+	else if (_wcsicmp(L"DWM_OPAQUE_BLEND", cType) == 0)
+	{
+		if (!measure->isXP) measure->colorType = DWM_OPAQUE_BLEND;
+		else isColorSupported = false;
 	}
 	else
 	{
-		RmLog(LOG_ERROR, L"SysColor.dll: Unknown color type");
+		RmLogF(rm, LOG_ERROR, L"Unknown ColorType: %s", cType);
+	}
+
+	if (!isColorSupported)
+	{
+		RmLogF(rm, LOG_ERROR, L"\"ColorType=%s\" is not supported by Windows XP.", cType);
 	}
 
 	measure->isHex = 0!=RmReadInt(rm, L"Hex", 0);
@@ -226,19 +269,22 @@ PLUGIN_EXPORT void Reload(void* data, void* rm, double* maxValue)
 PLUGIN_EXPORT double Update(void* data)
 {
 	Measure* measure = (Measure*)data;
+
+	// Windows XP does not support DWM values
+	if (measure->isXP && measure->colorType >= WIN7_AERO)
+	{
+		measure->color.clear();
+		return -1.0;
+	}
+
 	int r = 0, g = 0, b = 0, a = 0;
 
-	if (measure->colorType == SYSCOLOR_GLASS)
+	if (measure->colorType == WIN7_AERO)
 	{
-		if (measure->isXP)
-		{
-			measure->color.clear();
-			return -1.0;
-		}
-
 		DWORD color = 0;
 		BOOL opaque = FALSE;
 
+		// Color stored in 0xAARRGGBB format
 		HRESULT hr = c_DwmGetColorizationColor(&color, &opaque);
 		if (SUCCEEDED(hr))
 		{
@@ -248,6 +294,69 @@ PLUGIN_EXPORT double Update(void* data)
 			a = ((color >> 24) & 255);
 		}
 		else
+		{
+			measure->color.clear();
+			return -1.0;
+		}
+	}
+	else if (measure->colorType >= WIN8_WINDOW)
+	{
+		BOOL isEnabled;
+		HRESULT hr = c_DwmIsCompositionEnabled(&isEnabled);
+		if (SUCCEEDED(hr))
+		{
+			DWMColorizationParameters params;
+			hr = c_DwmGetColorizationParameters(&params);
+			if (SUCCEEDED(hr))
+			{
+				// COLORREF is stored in 0xAABBGGRR format, but the color is stored in 0xAARRGGBB format.
+				DWORD color = (measure->colorType == DWM_AFTERGLOW_COLOR) ? params.colorizationAfterglow : params.colorizationColor;
+				b = (color & 255);
+				g = ((color >> 8) & 255);
+				r = ((color >> 16) & 255);
+				a = ((color >> 24) & 255);
+
+				switch (measure->colorType)
+				{
+				case WIN8_WINDOW:
+				{
+					double bal = 100.0 - params.colorizationColorBalance;
+
+					r = min((int)round(r + (217 - r) * bal / 100.0), 255);
+					g = min((int)round(g + (217 - g) * bal / 100.0), 255);
+					b = min((int)round(b + (217 - b) * bal / 100.0), 255);
+				}
+					break;
+
+				case DWM_COLORIZATION_COLOR:
+				case DWM_AFTERGLOW_COLOR:
+					// Values already calculated
+					break;
+
+				case DWM_COLOR_BALANCE:
+					measure->color = std::to_wstring(params.colorizationColorBalance);
+					return 1.0;
+
+				case DWM_AFTERGLOW_BALANCE:
+					measure->color = std::to_wstring(params.colorizationAfterglowBalance);
+					return 1.0;
+
+				case DWM_BLUR_BALANCE:
+					measure->color = std::to_wstring(params.colorizationBlurBalance);
+					return 1.0;
+
+				case DWM_GLASS_REFLECTION_INTENSITY:
+					measure->color = std::to_wstring(params.colorizationGlassReflectionIntensity);
+					return 1.0;
+
+				case DWM_OPAQUE_BLEND:
+					measure->color = std::to_wstring(params.colorizationOpaqueBlend);
+					return 1.0;
+				}
+			}
+		}
+
+		if (FAILED(hr))
 		{
 			measure->color.clear();
 			return -1.0;
@@ -278,19 +387,19 @@ PLUGIN_EXPORT double Update(void* data)
 
 	switch (measure->displayType)
 	{
-	case DISPLAY_RED:
+	case RED:
 		measure->color = ColorToString(r, hex);
 		break;
 
-	case DISPLAY_GREEN:
+	case GREEN:
 		measure->color = ColorToString(g, hex);
 		break;
 
-	case DISPLAY_BLUE:
+	case BLUE:
 		measure->color = ColorToString(b, hex);
 		break;
 
-	case DISPLAY_ALPHA:
+	case ALPHA:
 		{
 			if (a)
 			{
@@ -304,7 +413,7 @@ PLUGIN_EXPORT double Update(void* data)
 		}		
 		break;
 
-	case DISPLAY_RGB:
+	case RGB:
 		{
 			// Red
 			measure->color = ColorToString(r, hex);
@@ -319,8 +428,7 @@ PLUGIN_EXPORT double Update(void* data)
 		}
 		break;
 
-	case DISPLAY_ALL:
-	default:
+	case ALL:
 		{
 			// Red
 			measure->color = ColorToString(r, hex);
@@ -375,13 +483,15 @@ PLUGIN_EXPORT void Finalize(void* data)
 	{
 		FreeLibrary(hLib);
 		hLib = nullptr;
+		c_DwmGetColorizationParameters = nullptr;
+		c_DwmIsCompositionEnabled = nullptr;
 		c_DwmGetColorizationColor = nullptr;
 	}
 }
 
 std::wstring ColorToString(const int color, bool hex)
 {
-	WCHAR buffer[255];
+	WCHAR buffer[5];
 
 	if (hex)
 	{

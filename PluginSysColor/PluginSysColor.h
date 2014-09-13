@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2012 Brian Ferguson
+  Copyright (C) 2014 Brian Ferguson
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -18,54 +18,81 @@
 
 #include "StdAfx.h"
 
+typedef struct COLORIZATIONPARAMS
+{
+	COLORREF	colorizationColor;
+	COLORREF	colorizationAfterglow;
+	UINT		colorizationColorBalance;
+	UINT		colorizationAfterglowBalance;
+	UINT		colorizationBlurBalance;
+	UINT		colorizationGlassReflectionIntensity;
+	BOOL		colorizationOpaqueBlend;
+} DWMColorizationParameters;
+
+typedef HRESULT(WINAPI * FPDWMGETCOLORIZATIONPARAMETERS)(COLORIZATIONPARAMS* pColorParams);
+static FPDWMGETCOLORIZATIONPARAMETERS c_DwmGetColorizationParameters = nullptr;
+
+typedef HRESULT(WINAPI * FPDWMISCOMPOSITIONENABLED)(BOOL *pfEnabled);
+static FPDWMISCOMPOSITIONENABLED c_DwmIsCompositionEnabled = nullptr;
+
 typedef HRESULT (WINAPI * FPDWMGETCOLORIZATIONCOLOR)(DWORD* pcrColorization, BOOL* pfOpaqueBlend);
 static FPDWMGETCOLORIZATIONCOLOR c_DwmGetColorizationColor = nullptr;
 
 // Following enumerated types corespond directly to these values: http://msdn.microsoft.com/en-us/library/windows/desktop/ms724371%28v=vs.85%29.aspx
-//	 (except Glass which is retrieved through DWM)
-enum MeasureType
+// (except for the Windows 7 & 8 options - which is retrieved through DWM)
+enum ColorType
 {
-	SYSCOLOR_SCROLLBAR = 0,
-	SYSCOLOR_DESKTOP,
-	SYSCOLOR_ACTIVECAPTION,
-	SYSCOLOR_INACTIVECAPTION,
-	SYSCOLOR_MENU,
-	SYSCOLOR_WINDOW,
-	SYSCOLOR_WINDOWFRAME,
-	SYSCOLOR_MENUTEXT,
-	SYSCOLOR_WINDOWTEXT,
-	SYSCOLOR_CAPTIONTEXT,
-	SYSCOLOR_ACTIVEBORDER,
-	SYSCOLOR_INACTIVEBORDER,
-	SYSCOLOR_APPWORKSPACE,
-	SYSCOLOR_HIGHLIGHT,
-	SYSCOLOR_HIGHLIGHTTEXT,
-	SYSCOLOR_BUTTONFACE,
-	SYSCOLOR_BUTTONSHADOW,
-	SYSCOLOR_GRAYTEXT,
-	SYSCOLOR_BUTTONTEXT,
-	SYSCOLOR_INACTIVECAPTIONTEXT,
-	SYSCOLOR_BUTTONHIGHLIGHT,
-	SYSCOLOR_3DDARKSHADOW,
-	SYSCOLOR_3DLIGHT,
-	SYSCOLOR_INFOTEXT,
-	SYSCOLOR_INFOBACKGROUND,
-	SYSCOLOR_GLASS,							// Special case for current aero color (25 is not defined)
-	SYSCOLOR_HOTLIGHT,
-	SYSCOLOR_ACTIVECAPTIONGRADIENT,
-	SYSCOLOR_INACTIVECAPTIONGRADIENT,
-	SYSCOLOR_MENUHIGHLIGHT,
-	SYSCOLOR_MENUBAR
+	SCROLLBAR = 0,
+	DESKTOP,
+	ACTIVECAPTION,
+	INACTIVECAPTION,
+	MENU,
+	WINDOW,
+	WINDOWFRAME,
+	MENUTEXT,
+	WINDOWTEXT,
+	CAPTIONTEXT,
+	ACTIVEBORDER,
+	INACTIVEBORDER,
+	APPWORKSPACE,
+	HIGHLIGHT,
+	HIGHLIGHTTEXT,
+	BUTTONFACE,
+	BUTTONSHADOW,
+	GRAYTEXT,
+	BUTTONTEXT,
+	INACTIVECAPTIONTEXT,
+	BUTTONHIGHLIGHT,
+	DDARKSHADOW,				// 3DDarkShadow
+	DLIGHT,						// 3DLight
+	INFOTEXT,
+	INFOBACKGROUND,
+	NOTHING,					// 25 is undefined
+	HOTLIGHT,
+	ACTIVECAPTIONGRADIENT,
+	INACTIVECAPTIONGRADIENT,
+	MENUHIGHLIGHT,
+	MENUBAR,
+	/*...*/
+	WIN7_AERO,					// RGBA returned by DwmGetColorizationColor function http://msdn.microsoft.com/en-us/library/windows/desktop/aa969513%28v=vs.85%29.aspx
+	WIN8_WINDOW,				// Following types are retreived by undocumented function "DwmGetColorizationParameters"
+	DWM_COLORIZATION_COLOR,
+	DWM_AFTERGLOW_COLOR,
+	DWM_COLOR_BALANCE,
+	DWM_AFTERGLOW_BALANCE,
+	DWM_BLUR_BALANCE,
+	DWM_GLASS_REFLECTION_INTENSITY,
+	DWM_OPAQUE_BLEND
 };
 
 enum DisplayType
 {
-	DISPLAY_ALL,
-	DISPLAY_RED,
-	DISPLAY_GREEN,
-	DISPLAY_BLUE,
-	DISPLAY_ALPHA,
-	DISPLAY_RGB			// Displays only red, green, blue values (No alpha)
+	ALL,
+	RED,
+	GREEN,
+	BLUE,
+	ALPHA,
+	RGB							// Displays only red, green, blue values (No alpha)
 };
 
 struct Measure
@@ -74,13 +101,17 @@ struct Measure
 	bool isHex;
 	bool isXP;
 
-	MeasureType colorType;
+	ColorType colorType;
 	DisplayType displayType;
+
+	void* rm;
 
 	Measure() : 
 		color(L""),
 		isHex(false),
 		isXP(false),
-		colorType(SYSCOLOR_DESKTOP),
-		displayType(DISPLAY_ALL) { }
+		colorType(DESKTOP),
+		displayType(ALL),
+		rm()
+	{ }
 };
