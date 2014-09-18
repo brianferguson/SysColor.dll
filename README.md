@@ -104,8 +104,8 @@ Download
 
 ####To download current plugin (.dll):
 
-* [32-bit version](https://github.com/brianferguson/SysColor.dll/blob/master/PluginSysColor/x32/Release/Clipboard.dll?raw=true)
-* [64-bit version](https://github.com/brianferguson/SysColor.dll/blob/master/PluginSysColor/x64/Release/Clipboard.dll?raw=true)
+* [32-bit version](https://github.com/brianferguson/SysColor.dll/blob/master/PluginSysColor/x32/Release/SysColor.dll?raw=true)
+* [64-bit version](https://github.com/brianferguson/SysColor.dll/blob/master/PluginSysColor/x64/Release/SysColor.dll?raw=true)
 
 
 Build Instructions
