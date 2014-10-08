@@ -90,6 +90,7 @@ Changes
 Here is a list of the major changes to the plugin.
 
 #####Version:
+* **1.1.0.15** - Fixed issue with XP systems asking for AERO+ options (thanks ikarus1969!).
 * **1.1.0.13** - Added new types. Updated to latest SDK. Updated to use VS2013.
 * **1.0.2** - Fixed crash when using `ColorType=Aero` across multiple skins.
 * **1.0.1** - Fixed Windows XP support.

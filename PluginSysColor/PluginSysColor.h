@@ -67,7 +67,7 @@ enum ColorType
 	DLIGHT,						// 3DLight
 	INFOTEXT,
 	INFOBACKGROUND,
-	NOTHING,					// 25 is undefined
+	INVALID,					// 25 is undefined, this is used for validation
 	HOTLIGHT,
 	ACTIVECAPTIONGRADIENT,
 	INACTIVECAPTIONGRADIENT,
@@ -106,7 +106,7 @@ struct Measure
 
 	void* rm;
 
-	Measure() : 
+	Measure() :
 		color(L""),
 		isHex(false),
 		isXP(false),

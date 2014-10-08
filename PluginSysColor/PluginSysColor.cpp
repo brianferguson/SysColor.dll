@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2012 Brian Ferguson
+  Copyright (C) 2014 Brian Ferguson
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -255,11 +255,13 @@ PLUGIN_EXPORT void Reload(void* data, void* rm, double* maxValue)
 	}
 	else
 	{
+		measure->colorType = INVALID;
 		RmLogF(rm, LOG_ERROR, L"Unknown ColorType: %s", cType);
 	}
 
 	if (!isColorSupported)
 	{
+		measure->colorType = INVALID;
 		RmLogF(rm, LOG_ERROR, L"\"ColorType=%s\" is not supported by Windows XP.", cType);
 	}
 
@@ -270,8 +272,7 @@ PLUGIN_EXPORT double Update(void* data)
 {
 	Measure* measure = (Measure*)data;
 
-	// Windows XP does not support DWM values
-	if (measure->isXP && measure->colorType >= WIN7_AERO)
+	if (measure->colorType == INVALID)
 	{
 		measure->color.clear();
 		return -1.0;
@@ -410,7 +411,7 @@ PLUGIN_EXPORT double Update(void* data)
 				measure->color.clear();
 				return -1.0;
 			}
-		}		
+		}
 		break;
 
 	case RGB:
