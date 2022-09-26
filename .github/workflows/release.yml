@@ -19,7 +19,7 @@ jobs:
         id: create_rmskin
         run: |
           Write-Output "Compressing archive: rmskin/*"
-          $target = "${{ github.event.repository.name }}_${{ github.event.release.tag_name }}.zip"
+          $target = "SysColor_${{ github.event.release.tag_name }}.zip"
           Compress-Archive -Path ./rmskin/* -DestinationPath $target
           Write-Output "Archive: $target"
 
