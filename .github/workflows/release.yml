@@ -1,0 +1,53 @@
+name: auto-rmskin-package
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  package:
+    runs-on: windows-latest
+    outputs:
+      target: ${{ steps.create_rmskin.outputs.target }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Create rmskin
+        shell: powershell
+        id: create_rmskin
+        run: |
+          Write-Output "Compressing archive: rmskin/*"
+          $target = "${{ github.event.repository.name }}_${{ github.event.release.tag_name }}.zip"
+          Compress-Archive -Path ./rmskin/* -DestinationPath $target
+          Write-Output "Archive: $target"
+
+          Write-Output "Writing footer..."
+          $size = [long](Get-Item $target).length
+          $size_bytes = [System.BitConverter]::GetBytes($size)
+          Add-Content -Path $target -Value $size_bytes -Encoding Byte
+
+          $flags = [byte]0
+          Add-Content -Path $target -Value $flags -Encoding Byte
+
+          $rmskin = [string]"RMSKIN`0"
+          Add-Content -Path $target -Value $rmskin -NoNewLine -Encoding ASCII
+
+          Write-Output "Changing .zip to .rmskin"
+          Rename-Item -Path $target -NewName ([io.path]::ChangeExtension($target, '.rmskin'))
+          $target = $target.Replace(".zip", ".rmskin")
+          Write-Output "File to upload: $target"
+
+          echo "::set-output name=target::$target"
+
+      - name: Upload rmskin
+        id: upload_rmskin
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_name: ${{ steps.create_rmskin.outputs.target }}
+          asset_path: ${{ steps.create_rmskin.outputs.target }}
+          asset_content_type: application/octet-stream
