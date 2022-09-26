@@ -6,8 +6,4 @@
   <ItemGroup>
     <ClCompile Include="PluginSysColor.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="PluginSysColor.h" />
-    <ClInclude Include="StdAfx.h" />
-  </ItemGroup>
 </Project>
