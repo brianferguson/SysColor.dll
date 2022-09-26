@@ -95,7 +95,7 @@ Changes
 Here is a list of the major changes to the plugin.
 
 #####Version:
-* **2.0.0.18** - Updated project to use VS2022. Removed Windows XP support. Added Windows 10/11 accent support. Changed the default ColorType to `Accent`.
+* **2.0.0.19** - Updated project to use VS2022. Removed Windows XP support. Added Windows 10/11 accent support. Changed the default ColorType to `Accent`.
 * **1.1.0.15** - Fixed issue with XP systems asking for AERO+ options (thanks ikarus1969!).
 * **1.1.0.13** - Added new types. Updated to latest SDK. Updated to use VS2013.
 * **1.0.2** - Fixed crash when using `ColorType=Aero` across multiple skins.
