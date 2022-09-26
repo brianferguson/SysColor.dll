@@ -27,7 +27,7 @@ Here are some of the features of the SysColor plugin:
 * Output in hex or decimal form.
 * A numeric return of "1" means the color was retrieved. A numeric value of "-1" means the color was *not* retrieved. The numeric value can be retrieved through [section variables](http://docs.rainmeter.net/manual-beta/variables/section-variables) (eg. [MeasureName:]).
 
-####Note:
+#### Note:
 The Windows 10/11 accent color is not available for Windows 7. The DWM (desktop window manager) may choose which color gets returned for some options.
 
 
@@ -87,14 +87,14 @@ Options
   * **DWM_GLASS_REFLECTION_INTENSITY** - DWM calculated glass reflection intensity. Usually returns `1` on Windows 8/8.1 systems.
   * **DWM_OPAQUE_BLEND** - Returns `0` if transparency is enabled on Windows Vista/7. Returns `1` if transparency is not enabled or if on Windows8/8.1 systems.
   
-####Note:
+#### Note:
 The Desktop Window Manager might choose which color get returned for some of the above options.
 
 Changes
 -
 Here is a list of the major changes to the plugin.
 
-#####Version:
+##### Version:
 * **2.0.0.19** - Updated project to use VS2022. Removed Windows XP support. Added Windows 10/11 accent support. Changed the default ColorType to `Accent`.
 * **1.1.0.15** - Fixed issue with XP systems asking for AERO+ options (thanks ikarus1969!).
 * **1.1.0.13** - Added new types. Updated to latest SDK. Updated to use VS2013.
@@ -104,11 +104,11 @@ Here is a list of the major changes to the plugin.
 
 Download
 -
-####The plugin will be installed by the following rmskin:
+#### The plugin will be installed by the following rmskin:
 
 * The latest plugin is included in the latest [release](https://github.com/brianferguson/SysColor.dll/releases).
 
-####Note: The rmskin also includes a copy of both the 32-bit and 64-bit plugins to easily include them in your rmskins!
+##### Note: The rmskin also includes a copy of both the 32-bit and 64-bit plugins to easily include them in your rmskins!
 
 
 Build Instructions
@@ -120,7 +120,7 @@ After Visual Studio has been installed and updated, open `PluginSysColor.sln` at
 
 Examples
 -
-####Example 1:
+#### Example 1:
 This example will get current Windows 10/11 accent color
 
 ```ini
@@ -131,7 +131,7 @@ ColorType=Accent
 ```
 
 
-####Example 2:
+#### Example 2:
 This example will get current desktop background color, the red channel of the highlight color, and menu background color.
 
 ```ini
@@ -152,7 +152,7 @@ DisplayType=ALL
 ColorType=Menu
 ```
 
-####Example 3:
+#### Example 3:
 This example will get the current Aero color, and make it the background of the skin.
 
 ```ini
